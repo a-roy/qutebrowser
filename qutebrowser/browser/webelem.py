@@ -35,7 +35,8 @@ from qutebrowser.mainwindow import mainwindow
 from qutebrowser.utils import log, usertypes, utils, qtutils, objreg
 
 
-Group = usertypes.enum('Group', ['all', 'links', 'images', 'url', 'inputs'])
+Group = usertypes.enum('Group', ['all', 'links', 'images', 'url', 'inputs',
+                                 'block'])
 
 
 SELECTORS = {
@@ -49,6 +50,10 @@ SELECTORS = {
                    'input[type=tel], input[type=number], '
                    'input[type=password], input[type=search], '
                    'input:not([type]), textarea'),
+    Group.block: ('address, article, aside, blockquote, canvas, dd, div, dl'
+                   'dt, fieldset, figcaption, figure, footer, form, h1, h2, h3'
+                   'h4, h5, h6, header, hr, li, main, nav, noscript, ol, output'
+                   'p, pre, section, table, tfoot, ul, video')
 }
 
 
@@ -421,3 +426,7 @@ class AbstractWebElement(collections.abc.MutableMapping):
         event = QMouseEvent(QEvent.MouseMove, pos, Qt.NoButton, Qt.NoButton,
                             Qt.NoModifier)
         self._tab.send_event(event)
+
+    def focus(self):
+        """Focus the element."""
+        self._js_call('focus')

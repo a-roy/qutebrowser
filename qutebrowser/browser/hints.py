@@ -39,7 +39,7 @@ from qutebrowser.utils import usertypes, log, qtutils, message, objreg, utils
 
 Target = usertypes.enum('Target', ['normal', 'current', 'tab', 'tab_fg',
                                    'tab_bg', 'window', 'yank', 'yank_primary',
-                                   'run', 'fill', 'hover', 'download',
+                                   'run', 'fill', 'hover', 'focus', 'download',
                                    'userscript', 'spawn'])
 
 
@@ -203,6 +203,7 @@ class HintActions:
             Target.tab_bg: usertypes.ClickTarget.tab_bg,
             Target.window: usertypes.ClickTarget.window,
             Target.hover: usertypes.ClickTarget.normal,
+            Target.focus: usertypes.ClickTarget.normal
         }
         if config.val.tabs.background:
             target_mapping[Target.tab] = usertypes.ClickTarget.tab_bg
@@ -218,6 +219,9 @@ class HintActions:
         try:
             if context.target == Target.hover:
                 elem.hover()
+            elif context.target == Target.focus:
+                elem.hover()
+                elem.focus()
             elif context.target == Target.current:
                 elem.remove_blank_target()
                 elem.click(target_mapping[context.target])
@@ -361,6 +365,7 @@ class HintManager(QObject):
         Target.run: "Run a command on a hint",
         Target.fill: "Set hint in commandline",
         Target.hover: "Hover over a hint",
+        Target.focus: "Focus an element",
         Target.download: "Download hint",
         Target.userscript: "Call userscript via hint",
         Target.spawn: "Spawn command via hint",
@@ -639,6 +644,7 @@ class HintManager(QObject):
                 - `tab-bg`: Open the link in a new background tab.
                 - `window`: Open the link in a new window.
                 - `hover` : Hover over the link.
+                - `focus` : Focus the element.
                 - `yank`: Yank the link to the clipboard.
                 - `yank-primary`: Yank the link to the primary selection.
                 - `run`: Run the argument as command.
@@ -852,6 +858,7 @@ class HintManager(QObject):
             Target.tab_bg: self._actions.click,
             Target.window: self._actions.click,
             Target.hover: self._actions.click,
+            Target.focus: self._actions.click,
             # _download needs a QWebElement to get the frame.
             Target.download: self._actions.download,
             Target.userscript: self._actions.call_userscript,

@@ -228,6 +228,10 @@ window._qutebrowser.webelem = (function() {
 
     funcs.focus = function(id) {
         var elem = elements[id];
+        var has_tabindex = elem.hasAttribute("tabindex");
+        if (!has_tabindex) {
+            elem.setAttribute("tabindex", "-1");
+        }
         elem.focus();
     };
 
